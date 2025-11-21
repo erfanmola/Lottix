@@ -40,7 +40,9 @@ const LottiePlayer = ({
 			const lottix = new Lottix({
 				canvas,
 				src: data
-					? new TextEncoder().encode(data)
+					? new TextEncoder().encode(
+							typeof data === "string" ? data : JSON.stringify(data),
+						)
 					: (LottiePlayerFileCache[src!] ?? src!),
 				autoPlay: autoplay,
 				loop,

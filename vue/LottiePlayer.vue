@@ -33,7 +33,7 @@ onMounted(() => {
       const instance = new Lottix({
          canvas: canvas.value,
          src: props.data
-            ? new TextEncoder().encode(props.data)
+            ? new TextEncoder().encode(typeof props.data === 'string' ? props.data : JSON.stringify(props.data))
             : (LottiePlayerFileCache[props.src!] ?? props.src!),
          autoPlay: props.autoplay,
          loop: props.loop,
