@@ -94,7 +94,10 @@ const LottiePlayer = ({
 			className="lottie-animation"
 			onClick={onClickLottieAnimation}
 		>
-			{!loaded && fallback && !(src in LottiePlayerFileCache) && fallback}
+			{!loaded &&
+				fallback &&
+				!((src ?? "") in LottiePlayerFileCache) &&
+				fallback}
 
 			{!loaded && <Outline />}
 

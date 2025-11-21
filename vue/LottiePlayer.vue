@@ -82,7 +82,7 @@ const outlineStyle = computed(() => {
       <!-- Fallback -->
       <template
          v-if="
-            !loaded && props.fallback && !(props.src in LottiePlayerFileCache)
+            !loaded && props.fallback && !((props.src ?? "") in LottiePlayerFileCache)
          "
       >
          <component :is="props.fallback" />

@@ -85,7 +85,9 @@ const LottiePlayer: Component<LottiePlayerProps> = (props) => {
 		>
 			<Show
 				when={
-					!loaded() && props.fallback && !(props.src in LottiePlayerFileCache)
+					!loaded() &&
+					props.fallback &&
+					!((props.src ?? "") in LottiePlayerFileCache)
 				}
 			>
 				{props.fallback}
