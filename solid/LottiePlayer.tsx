@@ -13,6 +13,8 @@ export type LottiePlayerProps = {
 	fallback?: JSX.Element;
 	playOnClick?: boolean;
 	outline?: string;
+	preserveState?: boolean;
+	lottixRefCallback?: (lottix: Lottix) => void;
 };
 
 export const LottiePlayerFileCache: { [key: string]: Uint8Array } = {};
@@ -43,13 +45,15 @@ const LottiePlayer: Component<LottiePlayerProps> = (props) => {
 				speed: props.speed,
 			});
 
+			props.lottixRefCallback?.(lottix);
+
 			lottix.on("load", () => {
 				setLoaded(true);
 			});
 
 			if (!(props.playOnClick || props.loop)) {
 				lottix.on("complete", () => {
-					if (!lottix) return;
+					if (!lottix || props.preserveState) return;
 					lottix.destroy();
 				});
 			}

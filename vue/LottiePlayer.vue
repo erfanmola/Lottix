@@ -16,6 +16,8 @@ export type LottiePlayerProps = {
    fallback?: any;
    playOnClick?: boolean;
    outline?: string;
+  	preserveState?: boolean;
+	lottixRefCallback?: (lottix: Lottix) => void;
 };
 
 const props = defineProps<LottiePlayerProps>();
@@ -41,6 +43,8 @@ onMounted(() => {
          speed: props.speed,
       });
 
+		props.lottixRefCallback?.(instance);
+
       lottix.value = instance;
 
       instance.on("load", () => {
@@ -49,7 +53,7 @@ onMounted(() => {
 
       if (!(props.playOnClick || props.loop)) {
          instance.on("complete", () => {
-            if (!instance) return;
+            if (!instance || props.preserveState) return;
             instance.destroy();
          });
       }

@@ -1,8 +1,8 @@
 import "./LottiePlayer.scss";
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import Lottix from "../utils/lottix";
+import Lottix, { lottixWorkers } from "../utils/lottix";
 
-export type LottiePlayerProps = {
+interface LottiePlayerProps extends React.HTMLAttributes<HTMLDivElement> {
 	src?: string;
 	data?: string;
 	speed?: number;
@@ -11,7 +11,9 @@ export type LottiePlayerProps = {
 	fallback?: ReactNode;
 	playOnClick?: boolean;
 	outline?: string;
-};
+	preserveState?: boolean;
+	lottixRefCallback?: (lottix: Lottix) => void;
+}
 
 export const LottiePlayerFileCache: { [key: string]: Uint8Array } = {};
 
@@ -24,12 +26,19 @@ const LottiePlayer = ({
 	fallback,
 	playOnClick,
 	outline,
+	preserveState,
+	lottixRefCallback,
+	...others
 }: LottiePlayerProps) => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	const [loaded, setLoaded] = useState(false);
 	const lottixRef = useRef<Lottix | null>(null);
+
+	useEffect(() => {
+		lottixWorkers.initialize(1);
+	}, []);
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -50,13 +59,15 @@ const LottiePlayer = ({
 				speed,
 			});
 
+			lottixRefCallback?.(lottix);
+
 			lottixRef.current = lottix;
 
 			lottix.on("load", () => setLoaded(true));
 
 			if (!(playOnClick || loop)) {
 				lottix.on("complete", () => {
-					if (!lottix) return;
+					if (!lottix || preserveState) return;
 					lottix.destroy();
 				});
 			}
@@ -70,7 +81,7 @@ const LottiePlayer = ({
 			}
 			lottixRef.current = null;
 		};
-	}, [src, autoplay, loop, playOnClick, speed]);
+	}, []);
 
 	const onClickLottieAnimation = () => {
 		const lottix = lottixRef.current;
@@ -95,6 +106,7 @@ const LottiePlayer = ({
 			ref={containerRef}
 			className="lottie-animation"
 			onClick={onClickLottieAnimation}
+			{...others}
 		>
 			{!loaded &&
 				fallback &&
@@ -104,6 +116,7 @@ const LottiePlayer = ({
 			{!loaded && <Outline />}
 
 			<canvas
+				key={src ?? data ?? "default"}
 				ref={canvasRef}
 				style={{ visibility: loaded ? "visible" : "hidden" }}
 			/>
