@@ -1,0 +1,22 @@
+{
+	"name": "lottix",
+	"version": "0.0.4",
+	"module": "index.ts",
+	"author": {
+		"name": "Erfan Mola",
+		"email": "hi@erfanxd.ir",
+		"url": "https://erfanmola.ir"
+	},
+	"type": "module",
+	"devDependencies": {
+		"@biomejs/biome": "^2.3.6",
+		"@types/pako": "^2.0.4"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"pako": "^2.1.0",
+		"uuid": "^13.0.0"
+	}
+}
