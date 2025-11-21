@@ -5,7 +5,8 @@ import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import Lottix from "../utils/lottix";
 
 export type LottiePlayerProps = {
-	src: string;
+	src?: string;
+	data?: string;
 	speed?: number;
 	autoplay?: boolean;
 	loop?: boolean;
@@ -29,7 +30,9 @@ const LottiePlayer: Component<LottiePlayerProps> = (props) => {
 
 			lottix = new Lottix({
 				canvas,
-				src: LottiePlayerFileCache[props.src] ?? props.src,
+				src: props.data
+					? new TextEncoder().encode(props.data)
+					: (LottiePlayerFileCache[props.src!] ?? props.src!),
 				autoPlay: props.autoplay,
 				loop: props.loop,
 				renderer: "sw",

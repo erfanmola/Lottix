@@ -3,7 +3,8 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 import Lottix from "../utils/lottix";
 
 export type LottiePlayerProps = {
-	src: string;
+	src?: string;
+	data?: string;
 	speed?: number;
 	autoplay?: boolean;
 	loop?: boolean;
@@ -16,6 +17,7 @@ export const LottiePlayerFileCache: { [key: string]: Uint8Array } = {};
 
 const LottiePlayer = ({
 	src,
+	data,
 	speed,
 	autoplay,
 	loop,
@@ -37,7 +39,9 @@ const LottiePlayer = ({
 
 			const lottix = new Lottix({
 				canvas,
-				src: LottiePlayerFileCache[src] ?? src,
+				src: data
+					? new TextEncoder().encode(data)
+					: (LottiePlayerFileCache[src!] ?? src!),
 				autoPlay: autoplay,
 				loop,
 				renderer: "sw",
