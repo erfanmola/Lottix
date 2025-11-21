@@ -1,6 +1,6 @@
 {
 	"name": "lottix",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"module": "index.ts",
 	"author": {
 		"name": "Erfan Mola",
