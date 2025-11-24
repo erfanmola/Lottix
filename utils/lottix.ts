@@ -95,6 +95,11 @@ class Lottix {
 
 	public state: PlayerState = "loading";
 
+	public frames = {
+		current: 0,
+		total: 0,
+	};
+
 	private listeners: Partial<Record<PlayerEvent, EventCallback[]>> = {};
 
 	private workerMessageCallbackBinded: (
@@ -144,10 +149,12 @@ class Lottix {
 
 		switch (data.type) {
 			case "event":
+				this.frames = data.frames;
 				this.emit(data.event);
 				break;
 			case "state":
 				this.state = data.state;
+				this.frames = data.frames;
 				break;
 		}
 	}
