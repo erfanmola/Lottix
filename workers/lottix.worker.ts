@@ -349,7 +349,7 @@ type LottixWorkerMessageState = {
 
 type LottixWorkerMessageTweak = {
 	type: "tweak";
-	action: "looping" | "direction" | "speed";
+	action: "looping" | "direction" | "speed" | "seek";
 	value: number | boolean;
 	id: string;
 };
@@ -439,6 +439,9 @@ self.addEventListener(
 							break;
 						case "speed":
 							instances[data.id]?.setSpeed(data.value as number);
+							break;
+						case "seek":
+							instances[data.id]?.frame(data.value as number);
 							break;
 					}
 				}

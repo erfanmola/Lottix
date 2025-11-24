@@ -205,6 +205,15 @@ class Lottix {
 		} satisfies LottixWorkerMessage);
 	}
 
+	public seek(frame: number) {
+		this.worker?.postMessage({
+			type: "tweak",
+			action: "seek",
+			value: frame,
+			id: this.id,
+		} satisfies LottixWorkerMessage);
+	}
+
 	public pause() {
 		this.worker?.postMessage({
 			type: "state",
