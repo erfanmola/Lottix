@@ -214,6 +214,15 @@ class Lottix {
 		} satisfies LottixWorkerMessage);
 	}
 
+	public playAt(frame: number) {
+		this.worker?.postMessage({
+			type: "tweak",
+			action: "playAt",
+			value: frame,
+			id: this.id,
+		} satisfies LottixWorkerMessage);
+	}
+
 	public pause() {
 		this.worker?.postMessage({
 			type: "state",

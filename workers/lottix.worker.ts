@@ -200,6 +200,33 @@ class LottixWorker {
 		this.setState("frozen");
 	}
 
+	playAt(frame: number) {
+		const duration = this.thorvg.duration();
+		const currentTime = Date.now() / 1000;
+
+		this.beginTime =
+			currentTime -
+			(frame / (this.totalFrame * (this.config.speed ?? 1))) * duration;
+
+		this.totalFrame = this.thorvg.totalFrame();
+		if (this.totalFrame < 1) {
+			return;
+		}
+
+		if (this.state === "playing") {
+			return;
+		}
+
+		if (this.observable || this.config.forceRender) {
+			this.setState("playing");
+
+			requestAnimationFrame(this.renderLoop.bind(this));
+			return;
+		}
+
+		this.setState("frozen");
+	}
+
 	public pause() {
 		this.setState("paused");
 		this.emit("pause");
@@ -349,7 +376,7 @@ type LottixWorkerMessageState = {
 
 type LottixWorkerMessageTweak = {
 	type: "tweak";
-	action: "looping" | "direction" | "speed" | "seek";
+	action: "looping" | "direction" | "speed" | "seek" | "playAt";
 	value: number | boolean;
 	id: string;
 };
@@ -442,6 +469,9 @@ self.addEventListener(
 							break;
 						case "seek":
 							instances[data.id]?.seek(data.value as number);
+							break;
+						case "playAt":
+							instances[data.id]?.playAt(data.value as number);
 							break;
 					}
 				}
