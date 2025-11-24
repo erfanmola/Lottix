@@ -118,8 +118,14 @@ class Lottix {
 
 		const { width, height } = this.config.canvas.getBoundingClientRect();
 
-		this.config.canvas.width = width * window.devicePixelRatio;
-		this.config.canvas.height = height * window.devicePixelRatio;
+		if (width > 0) {
+			this.config.canvas.width = width * window.devicePixelRatio;
+		}
+
+		if (height > 0) {
+			this.config.canvas.height = height * window.devicePixelRatio;
+		}
+
 		this.canvas = this.config.canvas.transferControlToOffscreen();
 
 		lottixObserver.observe(this.config.canvas);
