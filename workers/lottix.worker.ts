@@ -441,7 +441,7 @@ self.addEventListener(
 							instances[data.id]?.setSpeed(data.value as number);
 							break;
 						case "seek":
-							instances[data.id]?.frame(data.value as number);
+							instances[data.id]?.seek(data.value as number);
 							break;
 					}
 				}
