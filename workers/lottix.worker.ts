@@ -297,6 +297,10 @@ class LottixWorker {
 			state,
 			id: this.config.id,
 			type: "state",
+			frames: {
+				current: this.currentFrame,
+				total: this.totalFrame,
+			},
 		} satisfies LottixWorkerResponse);
 	}
 
@@ -305,6 +309,10 @@ class LottixWorker {
 			event,
 			id: this.config.id,
 			type: "event",
+			frames: {
+				current: this.currentFrame,
+				total: this.totalFrame,
+			},
 		} satisfies LottixWorkerResponse);
 	}
 }
@@ -354,12 +362,20 @@ type LottixWorkerResponseEvent = {
 	type: "event";
 	id: string;
 	event: PlayerEvent;
+	frames: {
+		current: number;
+		total: number;
+	};
 };
 
 type LottixWorkerResponseState = {
 	type: "state";
 	id: string;
 	state: PlayerState;
+	frames: {
+		current: number;
+		total: number;
+	};
 };
 
 const instances: { [key: string]: LottixWorker } = {};
