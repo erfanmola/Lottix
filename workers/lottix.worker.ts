@@ -126,7 +126,7 @@ class LottixWorker {
 		}
 
 		if (await this.update()) {
-			if (this.observable) {
+			if (this.observable || this.config.forceRender) {
 				this.render();
 			}
 			requestAnimationFrame(this.renderLoop.bind(this));
@@ -190,7 +190,7 @@ class LottixWorker {
 			return;
 		}
 
-		if (this.observable) {
+		if (this.observable || this.config.forceRender) {
 			this.setState("playing");
 
 			requestAnimationFrame(this.renderLoop.bind(this));
@@ -280,7 +280,7 @@ class LottixWorker {
 	public setObservable(value: boolean) {
 		this.observable = value;
 
-		if (this.observable) {
+		if (this.observable || this.config.forceRender) {
 			if (this.state === "frozen") {
 				this.play();
 			}

@@ -15,6 +15,7 @@ export type LottixConfig = {
 	count?: number;
 	speed?: number;
 	direction?: number;
+	forceRender?: boolean;
 };
 
 export type Renderer = "sw" | "wg" | "gl";
