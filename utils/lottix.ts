@@ -49,22 +49,34 @@ class LottixWorkers {
 	private workers: Worker[] = [];
 	private index = -1;
 
-	public initialize(count: number) {
-		for (let i = 0; i < count; i++) {
-			const worker = new Worker(
-				new URL("../workers/lottix.worker.ts", import.meta.url),
-				{
-					type: "module",
-				},
-			);
+	private initPromise: Promise<void> | null = null;
+	private initialized = false;
 
-			this.workers.push(worker);
-		}
+	public initialize(count: number): Promise<void> {
+		if (this.initialized) return Promise.resolve();
+
+		if (this.initPromise) return this.initPromise;
+
+		this.initPromise = (async () => {
+			for (let i = 0; i < count; i++) {
+				const worker = new Worker(
+					new URL("../workers/lottix.worker.ts", import.meta.url),
+					{ type: "module" },
+				);
+				this.workers.push(worker);
+			}
+
+			this.initialized = true;
+			this.initPromise = null;
+		})();
+
+		return this.initPromise;
 	}
 
-	public getWorker() {
-		this.index++;
+	public async getWorker(): Promise<Worker> {
+		await this.initialize(this.workers.length || 1);
 
+		this.index++;
 		if (this.index === this.workers.length) {
 			this.index = 0;
 		}
@@ -135,8 +147,13 @@ class Lottix {
 
 		lottixObserver.observe(this.config.canvas);
 
-		this.worker = lottixWorkers.getWorker();
 		this.workerMessageCallbackBinded = this.workerMessageCallback.bind(this);
+
+		this.init();
+	}
+
+	async init() {
+		this.worker = await lottixWorkers.getWorker();
 		this.worker?.addEventListener("message", this.workerMessageCallbackBinded);
 
 		this.loadAnimation();
