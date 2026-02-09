@@ -178,7 +178,9 @@ class Lottix {
 
 	async loadAnimation() {
 		if (typeof this.config.src === "string") {
-			const request = await fetch(this.config.src);
+			const request = await fetch(this.config.src, {
+				cache: "force-cache",
+			});
 			const buffer = await request.arrayBuffer();
 			this.animationData = new Uint8Array(buffer);
 		} else {
