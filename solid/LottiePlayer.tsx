@@ -4,6 +4,8 @@ import { createSignal, onCleanup, onMount, Show } from "solid-js";
 
 import Lottix from "../utils/lottix";
 
+const textEncoder = new TextEncoder();
+
 export type LottiePlayerProps = {
 	src?: string;
 	data?: string;
@@ -33,12 +35,12 @@ const LottiePlayer: Component<LottiePlayerProps> = (props) => {
 			lottix = new Lottix({
 				canvas,
 				src: props.data
-					? new TextEncoder().encode(
+					? textEncoder.encode(
 							typeof props.data === "string"
 								? props.data
 								: JSON.stringify(props.data),
 						)
-					: (LottiePlayerFileCache[props.src!] ?? props.src!),
+					: (LottiePlayerFileCache[props.src ?? ""] ?? props.src ?? ""),
 				autoPlay: props.autoplay,
 				loop: props.loop,
 				renderer: "sw",
@@ -75,21 +77,30 @@ const LottiePlayer: Component<LottiePlayerProps> = (props) => {
 	};
 
 	const Outline = () => {
+		if (!props.outline) return null;
 		return (
 			<div
 				class="shimmer"
 				style={{
-					"mask-image": `url("data:image/svg+xml;base64,${btoa(props.outline!)}")`,
+					"mask-image": `url("data:image/svg+xml;base64,${btoa(props.outline)}")`,
 				}}
 			/>
 		);
 	};
 
 	return (
+		// biome-ignore lint/a11y/useSemanticElements: container wraps canvas/fallback content; a native <button> would break existing layout/styling
 		<div
 			ref={element}
 			class="lottie-animation"
+			role="button"
+			tabIndex={0}
 			onClick={onClickLottieAnimation}
+			onKeyDown={(event) => {
+				if (event.key === "Enter" || event.key === " ") {
+					onClickLottieAnimation();
+				}
+			}}
 		>
 			<Show
 				when={

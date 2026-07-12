@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { inflate } from "pako";
 
 declare const self: Worker;

@@ -7,6 +7,8 @@ import "./LottiePlayer.scss";
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import Lottix from "../utils/lottix";
 
+const textEncoder = new TextEncoder();
+
 export type LottiePlayerProps = {
    src?: string;
    data?: string;
@@ -35,7 +37,7 @@ onMounted(() => {
       const instance = new Lottix({
          canvas: canvas.value,
          src: props.data
-            ? new TextEncoder().encode(typeof props.data === 'string' ? props.data : JSON.stringify(props.data))
+            ? textEncoder.encode(typeof props.data === 'string' ? props.data : JSON.stringify(props.data))
             : (LottiePlayerFileCache[props.src!] ?? props.src!),
          autoPlay: props.autoplay,
          loop: props.loop,

@@ -1,4 +1,3 @@
-// @ts-expect-error
 import Module from "../thorvg/thorvg.js";
 import type {
 	LottixConfig,
@@ -10,6 +9,7 @@ declare const self: Worker;
 
 class ThorVGClass {
 	public state: "uninit" | "initializing" | "done" = "uninit";
+	// biome-ignore lint/suspicious/noExplicitAny: thorvg.js WASM module ships no type declarations
 	public instance: any;
 
 	public async initialize() {
@@ -40,6 +40,7 @@ const sleep = async (time: number) => {
 
 class LottixWorker {
 	private config: LottixConfigWorker;
+	// biome-ignore lint/suspicious/noExplicitAny: thorvg.js WASM module ships no type declarations
 	private thorvg: any;
 	private beginTime = 0;
 	private counter = 1;
@@ -139,7 +140,7 @@ class LottixWorker {
 		}
 
 		const duration = this.thorvg.duration();
-		const currentTime = Date.now() / 1000;
+		const currentTime = performance.now() / 1000;
 		this.currentFrame =
 			((currentTime - this.beginTime) / duration) *
 			this.totalFrame *
@@ -185,7 +186,7 @@ class LottixWorker {
 			return;
 		}
 
-		this.beginTime = Date.now() / 1000;
+		this.beginTime = performance.now() / 1000;
 		if (this.state === "playing") {
 			return;
 		}
@@ -202,7 +203,7 @@ class LottixWorker {
 
 	playAt(frame: number) {
 		const duration = this.thorvg.duration();
-		const currentTime = Date.now() / 1000;
+		const currentTime = performance.now() / 1000;
 
 		this.beginTime =
 			currentTime -

@@ -43,7 +43,7 @@ export type PlayerEvent =
 	| "play"
 	| "stop";
 
-export type EventCallback = (...args: any[]) => void;
+export type EventCallback = (...args: unknown[]) => void;
 
 class LottixWorkers {
 	private workers: Worker[] = [];
@@ -81,7 +81,12 @@ class LottixWorkers {
 			this.index = 0;
 		}
 
-		return this.workers[this.index];
+		const worker = this.workers[this.index];
+		if (!worker) {
+			throw new Error("Lottix worker pool is empty");
+		}
+
+		return worker;
 	}
 }
 
@@ -298,7 +303,7 @@ class Lottix {
 		this.listeners[event] = callbacks.filter((cb) => cb !== callback);
 	}
 
-	protected emit(event: PlayerEvent, ...args: any[]): void {
+	protected emit(event: PlayerEvent, ...args: unknown[]): void {
 		const callbacks = this.listeners[event];
 		if (!callbacks) return;
 		for (const cb of callbacks) {

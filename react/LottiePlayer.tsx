@@ -1,6 +1,8 @@
 import "./LottiePlayer.scss";
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import Lottix, { lottixWorkers } from "../utils/lottix";
+import Lottix from "../utils/lottix";
+
+const textEncoder = new TextEncoder();
 
 interface LottiePlayerProps extends React.HTMLAttributes<HTMLDivElement> {
 	src?: string;
@@ -36,10 +38,7 @@ const LottiePlayer = ({
 	const [loaded, setLoaded] = useState(false);
 	const lottixRef = useRef<Lottix | null>(null);
 
-	useEffect(() => {
-		lottixWorkers.initialize(1);
-	}, []);
-
+	// biome-ignore lint/correctness/useExhaustiveDependencies: mount-once; canvas is remounted via `key` when src/data change
 	useEffect(() => {
 		const canvas = canvasRef.current;
 
@@ -49,10 +48,10 @@ const LottiePlayer = ({
 			const lottix = new Lottix({
 				canvas,
 				src: data
-					? new TextEncoder().encode(
+					? textEncoder.encode(
 							typeof data === "string" ? data : JSON.stringify(data),
 						)
-					: (LottiePlayerFileCache[src!] ?? src!),
+					: (LottiePlayerFileCache[src ?? ""] ?? src ?? ""),
 				autoPlay: autoplay,
 				loop,
 				renderer: "sw",
@@ -102,10 +101,18 @@ const LottiePlayer = ({
 	};
 
 	return (
+		// biome-ignore lint/a11y/useSemanticElements: container wraps canvas/fallback content; a native <button> would break existing layout/styling
 		<div
 			ref={containerRef}
 			className="lottie-animation"
+			role="button"
+			tabIndex={0}
 			onClick={onClickLottieAnimation}
+			onKeyDown={(event) => {
+				if (event.key === "Enter" || event.key === " ") {
+					onClickLottieAnimation();
+				}
+			}}
 			{...others}
 		>
 			{!loaded &&
